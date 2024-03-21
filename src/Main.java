@@ -1,75 +1,49 @@
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
 
+
     public static void main(String[] args) {
         StringBuilder tempText = new StringBuilder();
+        List listDirectories = new ArrayList();
+        listDirectories.addAll(List.of(new String[]{"C://Games", "C://Games//src", "C://Games//res", "C://Games//savegames", "C://Games//temp", "C://Games//src//main", "C://Games//src//test", "C://Games//res//drawables", "C://Games//res//icons", "C://Games//res//vectors"}));
+        for (int i = 0; i < listDirectories.size(); i++) {
+            createDirectory((String) listDirectories.get(i), tempText);
+        }
+        createFile("C://Games//src//main", "Main.java", tempText);
+        createFile("C://Games//src//main", "Utils.java", tempText);
+        createFile("C://Games//temp", "temp.txt", tempText);
+        System.out.println(tempText);
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("C://Games//temp//temp.txt", true))) {
+            tempText.append("Ждем следующего запуска програмы.\n");
+            bw.write(tempText.toString());
+            bw.flush();
+        } catch (Exception e) {
+            System.out.println("2" + e.getMessage());
+        }
+    }
 
-        File dirGames = new File("C://Games");
+    static void createDirectory(String name, StringBuilder tempText) {
+        File dirGames = new File(name);
         if (dirGames.mkdir()) {
-            tempText.append(" - Создана папка Games\n");
+            tempText.append(" - Создана папка " + name + "\n");
         } else {
-            tempText.append(" -  папка Games не создана или уже существует\n");
+            tempText.append(" - Папка " + name + "не создана или уже существует\n");
         }
+    }
 
-        File dirSrc = new File(dirGames, "src");
-        File dirRes = new File(dirGames, "res");
-        File dirSavegames = new File(dirGames, "savegames");
-        File dirTemp = new File(dirGames, "temp");
-        if (dirSrc.mkdir() && dirSavegames.mkdir() && dirRes.mkdir()
-                && dirTemp.mkdir()) {
-            tempText.append(" - В папке Games была создана новая папка или папки:\n");
-        } else {
-            tempText.append(" - В папке Games не все созданы папки или они уже существуют\n");
-        }
-
-        File dirMain = new File(dirSrc, "main");
-        File dirTest = new File(dirSrc, "test");
-        if (dirMain.mkdir() && dirTest.mkdir()) {
-            tempText.append(" - В папке src созданы новые папки или папка:\n");
-        } else {
-            tempText.append(" - В папке src не все созданы папки или уже существуют\n");
-        }
-
-        File fileMain = new File(dirMain, "Main.java");
-        File fileUtils = new File(dirMain, "Utils.java");
-        try {
-            if (fileMain.createNewFile() && fileUtils.createNewFile()) {
-                tempText.append(" - В папке main созданы новые файлы или файл: \n");
-            } else {
-                tempText.append(" - В папке main не все созданы файлы или они существуют\n");
-            }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-
-        File fileTemp = new File(dirTemp, "temp.txt");
+    static void createFile(String path, String name, StringBuilder tempText) {
+        File fileTemp = new File(path + "//" + name);
         try {
             if (fileTemp.createNewFile()) {
-                tempText.append(" - В папке temp создан новый файл:\n");
+                tempText.append(" - В папке " + path + " создан новый файл: " + name + "\n");
             } else {
-                tempText.append(" - В папке temp не все созданы файлы или они существуют\n");
+                tempText.append(" - В папке " + path + " " + name + " уже существует\n");
             }
         } catch (IOException e) {
             System.out.println("1 " + e.getMessage());
-        }
-
-        File dirDrawables = new File(dirRes, "drawables");
-        File dirIcons = new File(dirRes, "icons");
-        File dirVectors = new File(dirRes, "vectors");
-
-        if (dirDrawables.mkdir() && dirIcons.mkdir() && dirVectors.mkdir()) {
-            tempText.append(" - В папке res созданы новые папки или папка:\n");
-        } else {
-            tempText.append(" - В папке Games не все созданы папки или они уже существуют\n");
-        }
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileTemp, true))) {
-            tempText.append("Ждем следующего запуска програмы:\n");
-            bw.write(tempText.toString());
-            bw.flush();
-
-        } catch (Exception e) {
-            System.out.println("2" + e.getMessage());
         }
     }
 }
